@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+  <title>Dashboard</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- Custom styles for this template -->
+  <link href="css/dashboard.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <%- include('navBar.ejs') -%>
+
+  <div class="container-fluid">
+    <div class="row">
+      <%- include ('sideBar.ejs')-%>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2">Layer Detail</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button class="btn btn-sm btn-outline-secondary">Share</button>
+              <button class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-deck">
+          <!-- Layer Box -->
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Id</h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%- id %></h6>
+            </div>
+          </div>
+
+          <!-- Layer Box -->
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Name</h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%- name %></h6>
+            </div>
+          </div>
+
+          <!-- Activation function Box -->
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Type</h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%- type %></h6>
+            </div>
+          </div>
+
+          <!-- Bias Box -->
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Total Neuron</h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%- data.nodeCount %></h6>
+            </div>
+          </div>
+        </div>
+        <br>
+        
+
+        <br>
+
+        <h2>Neurons</h2>
+        <canvas class="my-4" id="scatterPlot" width="900" height="200"></canvas>
+        <br>
+        <br>
+        <div class="table-responsive">
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Bias</th>
+                <th>Activation Function</th>
+                <th>Output</th>
+              </tr>
+            </thead>
+            <tbody id="neuronTableBody"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  <script>
+    feather.replace()
+  </script>
+
+  <!-- Graphs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <script>
+    function renderScatterPlot(data){
+      var ctx = document.getElementById("scatterPlot");
+      var scatterChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+              datasets: [{
+                  label: 'Neuron Output',
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data: data
+              }]
+          },
+          options: {
+            scales: {
+              xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+              }]
+            }
+          }
+        }
+      );
+    }
+
+  </script>
+
+  <script>
+    var percentColors = [
+        { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+        { pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
+        { pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } } ];
+
+    var getColorForPercentage = function(pct) {
+        for (var i = 1; i < percentColors.length - 1; i++) {
+            if (pct < percentColors[i].pct) {
+                break;
+            }
+        }
+        var lower = percentColors[i - 1];
+        var upper = percentColors[i];
+        var range = upper.pct - lower.pct;
+        var rangePct = (pct - lower.pct) / range;
+        var pctLower = 1 - rangePct;
+        var pctUpper = rangePct;
+        var color = {
+            r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+            g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+            b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+        };
+        return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+        // or output as hex if preferred
+    };
+
+    function renderNeuronList(){
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- id %>/neurons?offset=0&limit=1000`;
+      $.ajax({
+          type: "GET",
+          url: url,
+          success: function(xhr, res, options){
+              let body = xhr;
+              let neuronTableBody = $("#neuronTableBody");
+              neuronTableBody.empty();
+              body.data.map(function(node){
+                  // neuronTableBody.append(`<button type="button" class="btn btn-outline-info btn-block" onclick="redirectToNodeResult(${layer.id}, ${node.id})">Id: ${node.id} | Output: ${node.output}</button><br>`);
+                  neuronTableBody.append(`<tr>
+                      <td><a href="/tests/<%- testId %>/result/layers/<%- id %>/neurons/${node.id}">${node.id}</a></td>
+                      <td>${node.bias}</td>
+                      <td>${node.activationFunction}</td>
+                      <td><i class="fas fa-circle" style="color:${getColorForPercentage((node.output + 1) / 2)}"></i>  ${node.output} </td>
+                  </tr>`)
+              });
+
+              renderScatterPlot(body.data.map(function(node, idx){
+                return {
+                  x: idx,
+                  y: node.output
+                }
+              }))
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+        });
+      }
+      renderNeuronList();
+  </script>
+</body>
+
+</html>

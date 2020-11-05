@@ -1,0 +1,50 @@
+<div class="card-deck">
+    <!-- Id Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Name</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%- test.name %></h6>
+        </div>
+    </div>
+    <!-- Model Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Model</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%- test.configuration.model.name %></h6>
+        </div>
+    </div>
+    <!-- Input Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Input</h5>
+            <img src="<%- test.input %>" height="50" weight="50">
+        </div>
+    </div>
+</div>
+<br>
+<div class="card-deck">
+    <!-- loss Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Loss</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%- result.loss %></h6>
+        </div>
+    </div>
+    <!-- Accuracy Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Accuracy</h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%- result.accuracy %></h6>
+        </div>
+    </div>
+    <!-- UpdateAt Box -->
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Confusion Matrix</h5>
+            <%- include ('confusionMatrix.ejs')-%>
+            <!-- <h5 class="card-title">Finished At</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><%- test.updatedAt %></h6> -->
+        </div>
+    </div>
+</div>
+<br>

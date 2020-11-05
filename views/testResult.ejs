@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+  <title>Dashboard</title>
+
+  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/dashboard/">
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- Custom styles for this template -->
+  <link href="css/dashboard.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <%- include('navBar.ejs') -%>
+
+  <div class="container-fluid">
+    <div class="row">
+      <%- include ('sideBar.ejs')-%>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h1 class="h2">Test</h1>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Test</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Model</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">Result</a>
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"><%- include('testDetailTab.ejs') %></div>
+          <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"><%- include('modelDetailTab.ejs') %></div>
+          <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab"><%- include('testResultTab.ejs') %></div>
+        </div>
+
+
+
+
+        <!-- <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4"> -->
+          
+
+        <!-- </main> -->
+        
+
+      </main>
+    </div>
+  </div>
+  
+
+  <!-- Modal -->
+  <div class="modal fade" id="createTestModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Filter</h5>
+          <button type="button" id="modalCloseBtn" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form onsubmit="filter()">
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="minOutput">Min Output</label>
+                  <input type="number" class="form-control" id="minOutput" placeholder="Min Output" step=".01">
+                </div>
+
+                <div class="form-group">
+                  <label for="maxOutput">Min Output</label>
+                  <input type="number" class="form-control" id="maxOutput" placeholder="Max Output" step=".01">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="minBias">Min Bias</label>
+                  <input type="number" class="form-control" id="minBias" placeholder="Min Bias" step=".01">
+                </div>
+
+                <div class="form-group">
+                  <label for="maxBias">Max bias</label>
+                  <input type="number" class="form-control" id="maxBias" placeholder="Max Bias" step=".01">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  <script>
+    feather.replace()
+    let inputLayerLimit = 3;
+    let hiddenLayerLimit = 2;
+    let outputLayerLimit = 3;
+    let hiddenLayersLimit = 1;
+
+
+    let inputLayerOffset = 0;
+    let hiddenLayerOffset = 0;
+    let outputLayerOffset = 0;
+    let hiddenLayersOffset = 0;
+
+    let minBias, maxBias, minOutput, maxOutput;
+
+  </script>
+
+  <script>
+    function render(){
+      configurePaginationButtons();
+      renderInputLayerSection();
+      renderOutputLayerSection();
+      renderHiddenLayerSection();
+      renderFilterPills();
+    }
+
+    function filter(){
+      event.preventDefault();
+
+      minBias = $("#minBias").val() || null;
+      maxBias = $("#maxBias").val() || null;
+      minOutput = $("#minOutput").val() || null;
+      maxOutput = $("#maxOutput").val() || null;
+
+      render();
+
+      $("#modalCloseBtn").click();
+    }
+
+    function configurePaginationButtons(){
+      $("#inputLayerNodePrevBtn").click(function(){
+        inputLayerOffset -= inputLayerLimit;
+        renderInputLayerSection();
+      })
+      $("#inputLayerNodeNextBtn").click(function(){
+        inputLayerOffset += inputLayerLimit;
+        renderInputLayerSection();
+      })
+
+      $("#outputLayerNodePrevBtn").click(function(){
+        outputLayerOffset -= outputLayerLimit;
+        renderOutputLayerSection();
+      })
+      $("#outputLayerNodeNextBtn").click(function(){
+        outputLayerOffset += outputLayerLimit;
+        renderOutputLayerSection();
+      })
+
+      $("#hiddenLayerPrevBtn").click(function(){
+        hiddenLayersOffset -= hiddenLayersLimit;
+        renderHiddenLayerSection();
+      })
+      $("#hiddenLayerNextBtn").click(function(){
+        hiddenLayersOffset += hiddenLayersLimit;
+        renderHiddenLayerSection();
+      })
+
+      $("#hiddenLayerNodePrevBtn").click(function(){
+        hiddenLayerOffset -= hiddenLayerLimit;
+        renderHiddenLayerSection();
+      })
+      $("#hiddenLayerNodeNextBtn").click(function(){
+        hiddenLayerOffset += hiddenLayerLimit;
+        renderHiddenLayerSection();
+      })
+    }
+
+    function redirectToNodeResult(layerId, id){
+      location.href = `/tests/<%- testId %>/result/layers/${layerId}/neurons/${id}`
+    }
+
+    function renderInputLayerSection(){
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- inputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+      $.ajax({
+          type: "GET",
+          url: url,
+          success: function(xhr, res, options){
+              let body = xhr;
+              let inputLayerNodes = $("#inputLayerNodes");
+
+              inputLayerNodes.empty();
+
+              body.data.map(function(node){
+                inputLayerNodes.append(`<button type="button" class="btn btn-outline-info btn-block" onclick="redirectToNodeResult('<%- inputLayer.id %>', '${node.id}')">Id: ${node.id} | Input: ${node.output}</button><br>`);
+              })
+
+              document.getElementById("inputLayerNodePrevBtn").disabled = body.pagination.hasPrev == false;
+              document.getElementById("inputLayerNodeNextBtn").disabled = body.pagination.hasNext == false;
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+      });
+    }
+
+    function renderOutputLayerSection(){
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- outputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+      $.ajax({
+          type: "GET",
+          url: url,
+          success: function(xhr, res, options){
+              let body = xhr;
+              let outputLayerNodes = $("#outputLayerNodes");
+
+              outputLayerNodes.empty();
+
+              body.data.map(function(node){
+                outputLayerNodes.append(`<button type="button" class="btn btn-outline-info btn-block" onclick="redirectToNodeResult('<%- outputLayer.id %>', '${node.id})'>Id: ${node.id} | Output: ${node.output}</button><br>`);
+              })
+
+              document.getElementById("outputLayerNodePrevBtn").disabled = body.pagination.hasPrev == false;
+              document.getElementById("outputLayerNodeNextBtn").disabled = body.pagination.hasNext == false;
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+      });
+    }
+
+    function renderHiddenLayerSection(){
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers?offset=${hiddenLayersOffset}&limit=${hiddenLayersLimit}&type=HIDDEN`;
+      $.ajax({
+          type: "GET",
+          url: url,
+          success: function(xhr1, res, options){
+              let layerBody = xhr1;
+              let layer = xhr1.data[0]
+              document.getElementById("hiddenLayerPrevBtn").disabled = layerBody.pagination.hasPrev == false;
+              document.getElementById("hiddenLayerNextBtn").disabled = layerBody.pagination.hasNext == false;
+
+              document.getElementById("hiddenLayerLabel").innerHTML = layer.name;
+
+              const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/${layer.id}/neurons?offset=${hiddenLayerOffset}&limit=${hiddenLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+              $.ajax({
+                  type: "GET",
+                  url: url,
+                  success: function(xhr, res, options){
+                      let body = xhr;
+                      let hiddenLayerNodes = $("#hiddenLayerNodes");
+                      hiddenLayerNodes.empty();
+
+                      body.data.map(function(node){
+                        hiddenLayerNodes.append(`<button type="button" class="btn btn-outline-info btn-block" onclick="redirectToNodeResult('${layer.id}', '${node.id}')">Id: ${node.id} | Output: ${node.output}</button><br>`);
+                      })
+
+                      document.getElementById("hiddenLayerNodePrevBtn").disabled = body.pagination.hasPrev == false;
+                      document.getElementById("hiddenLayerNodeNextBtn").disabled = body.pagination.hasNext == false;
+                  },
+                  error: function(xhr){
+                      console.log("err")
+                  }
+              });
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+      });
+    }
+
+    function renderFilterPills(){
+      let filterPillSection = $("#filterPills");
+      filterPillSection.empty();
+
+      if (minBias != null && minBias != undefined){
+        filterPillSection.append(`<span class="badge badge-pill badge-success">Bias >= ${minBias} <a onclick="minBias=null; render()"><i class="far fa-times-circle"></i></a></span>`)
+      }
+
+      if (maxBias != null && maxBias != undefined){
+        filterPillSection.append(`<span class="badge badge-pill badge-success">Bias <= ${maxBias} <a onclick="maxBias=null; render()"><i class="far fa-times-circle"></i></a></span>`)
+      }
+
+      if (minOutput != null && minOutput != undefined){
+        filterPillSection.append(`<span class="badge badge-pill badge-success">Output >= ${minOutput} <a onclick="minOutput=null; render()"><i class="far fa-times-circle"></i></a></span>`)
+      }
+
+      if (maxOutput != null && maxOutput != undefined){
+        filterPillSection.append(`<span class="badge badge-pill badge-success">Output <= ${maxOutput} <a onclick="maxOutput=null; render()"><i class="far fa-times-circle"></i></a></span>`)
+      }
+    }
+
+    render();
+  </script>
+</body>
+
+</html>

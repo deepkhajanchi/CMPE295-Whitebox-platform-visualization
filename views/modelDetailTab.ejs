@@ -1,0 +1,322 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<style>
+
+.bar {
+    fill: steelblue;
+}
+
+.bar:hover {
+    fill: brown;
+}
+
+.title {
+    font: bold 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
+
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+#layerNeuronChart1 {
+    border-radius: 25px;
+    border: 2px solid #73AD21;
+    padding: 20px;
+    text-align: center;
+}
+
+</style>
+
+<h2>Model Summary</h2>
+<hr>
+<div class="card-deck">
+    <!-- Layer Box -->
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Layer Count</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><%- layerCount %></h6>
+      </div>
+    </div>
+
+    <!-- Layer Box -->
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Neuron Count</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><%- neuronCount %></h6>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Input Parameter Count</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><%- inputLayer.data.nodeCount %></h6>
+      </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <h5 class="card-title">Output Parameter Count</h5>
+        <h6 class="card-subtitle mb-2 text-muted"><%- outputLayer.data.nodeCount %></h6>
+      </div>
+    </div>
+</div>
+<br><br>
+<!-- <canvas id="layerNeuronChart"></canvas> -->
+<div id="layerNeuronChart1"></div>
+
+
+<script>
+    function renderLayerSVGChart(data){
+        var margin = {top: 80, right: 180, bottom: 80, left: 180},
+        width = 1200 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+        var padding = 0.1, outerPadding = 0.3,
+        x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], padding, outerPadding);
+
+        var y = d3.scale.linear()
+        .range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(8, "%");
+
+        var svg = d3.select("#layerNeuronChart1").append("svg") 
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // d3.tsv("data.tsv", type, function (error, data) {
+
+        var a = alpha(data, v),	  //scale factor between value and bar width
+            mid = Midi(data, v, a),	//mid-point displacement of bar i
+            w = Wi(data, v, a);		  //width of bar i
+
+        // x.range(data.map(mid));	//force irregular intervals based on value
+
+        x.domain(data.map(function (d) {
+            return d.name;
+        }));
+        y.domain([0, d3.max(data, v)]);
+
+
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function(d) {
+            return `<strong>Layer:</strong>"${d.name}"<br><strong>Type:</strong>"${d.type}<br><strong>Node Count:</strong>"${d.value}"`;
+            })
+
+        svg.call(tip);
+
+        svg.append("text")
+            .attr("class", "title")
+            .attr("x", x(data[0].name))
+            .attr("y", -26)
+            .attr("shape-rendering", "crispEdges");
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll(".tick text")
+            .call(wrap, function (d, i) {
+            return w(i);
+            });
+
+        // svg.append("g")
+        //   .attr("class", "y axis")
+        //   .call(yAxis);
+
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function (d, i) {
+            return x(d.name) //- a /** d.value*//2;	//center the bar on the tick
+            })
+            //using x.range sets x.rangeBands to zero, compute width as a function of value
+            .attr("width", x.rangeBand() || function (d) {
+            return a; //* d.value;	//`a` already accounts for both types of padding
+            })
+            .attr("y", function (d) {
+            return y(d.value) / 2;
+            })
+            .attr("height", function (d) {
+            return height - y(d.value);
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide)
+            .on("click", function(d,i){
+                window.location.href = `/tests/<%- testId %>/result/layers/${d.id}`
+            });
+
+        // });
+
+        function wrap(text, width) {
+        text.each(function (d, i) {
+            var text = d3.select(this),
+            words = text.html(d).text().split(/\s+/).reverse(), //reset html to clear any tspans added before
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.1, // ems
+            y = text.attr("y"),
+            dy = parseFloat(text.attr("dy")),
+            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em"),
+            //[edit]add dWidth
+            dWidth = typeof width === "function" ? width(d, i) : width;
+            while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > dWidth/*[edit]*/) {
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+            }
+            }
+        });
+        }
+
+        function type(d) {
+        d.value = +d.value;
+        return d;
+        }
+        function v(d) {
+        return +d.value;
+        }
+        function alpha(values, value) {
+        var n = values.length, total = d3.sum(values, value);
+        return (width - (n - 1) * padding * width / n - 2 * outerPadding * width / n) / total
+        }
+        function Wi(values, value, alpha) {
+        return function (i) {
+            return value(values[i]) //* alpha
+        }
+        }
+        function Midi(values, value, alpha) {
+        var w = Wi(values, value, alpha), n = values.length;
+        return function (_, i) {
+            var op = outerPadding * width / n, p = padding * width / n;
+            return op + d3.sum(values.slice(0, i), value) * alpha + i * p + w(i) / 2;
+        }
+        }
+    }
+  </script>
+
+
+
+<script>
+    function randomColorString(){
+        return `#${Math.floor(Math.random()*16777215).toString(16)}`;
+    }
+
+    function renderLayerChart(){
+        const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers`;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function(xhr, res, options){
+                let body = xhr;
+                
+                let inputLayerColor = randomColorString();
+                let hiddenLayerColor = randomColorString();
+                let outputLayerColor = randomColorString();
+
+                renderLayerSVGChart(body.data.map(function(d){
+                    return {
+                        id: d.id,
+                        name: d.name,
+                        type: d.type,
+                        value: d.data.nodeCount
+                    }
+                }));
+                var ctx3 = document.getElementById('layerNeuronChart').getContext('2d');
+                var modelLayerChart = new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: body.data.map(function(item){
+                            return item.name
+                        }),
+                        datasets: [{
+                            label: "Neuron Count",
+                            // barPercentage: 0.5,
+                            // barThickness: 6,
+                            maxBarThickness: 1,
+                            // minBarLength: 2,
+                            data: body.data.map(function(item){
+                                return item.data.nodeCount
+                            }),
+                            backgroundColor: body.data.map(function(item, idx){
+                                if (idx == 0){
+                                    return inputLayerColor;
+                                }
+                                else if (idx == body.data.length - 1){
+                                    return outputLayerColor;
+                                }
+                                else {
+                                    return hiddenLayerColor;
+                                }
+                            }),
+
+
+                        }]
+                    },
+                    options: {}
+                });
+            },
+            error: function(xhr){
+                console.log("err")
+            }
+        });
+    }
+    renderLayerChart();
+</script>
