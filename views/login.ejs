@@ -50,7 +50,6 @@
                 success: function (xhr, res, options) {
                     let body = xhr;
                     let profile = body.profile;
-alert(JSON.stringify(xhr, null, 4))
                     if (profile){
                         localStorage.setItem("profile", JSON.stringify(profile));
                         window.location = "/tests";

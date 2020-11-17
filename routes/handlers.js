@@ -17,20 +17,21 @@ module.exports.getModels = function(req, res){
 }
 
 module.exports.getTests = function(req, res){
-    request({
-        url: `${dataServer}/tests`,
-        method: "GET",
-    }, function (err, hrx, body) {
-        if (err) {
-            console.log("err: ", err)
-        }
+    const { profileId } = req.query;
+    // request({
+    //     url: `${dataServer}/tests?profileId=${profileId}`,
+    //     method: "GET",
+    // }, function (err, hrx, body) {
+    //     if (err) {
+    //         console.log("err: ", err)
+    //     }
 
-        let data = JSON.parse(body);
-        data.serverUrl = dataServer;
-        data.page = 'test'
+    //     let data = JSON.parse(body);
+    //     data.serverUrl = dataServer;
+    //     data.page = 'test'
 
         return res.render("tests", data);
-    })
+    // })
 }
 
 module.exports.getSingleNeuronResult = function (req, res) {

@@ -1,6 +1,12 @@
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="images/logo.png" height="30" weight="30"></img>     NN-Visualizer</a>
     <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a id="nav-username" class="nav-link" href="#" ></a>
+      </li>
+    </ul>
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
         <a class="nav-link" href="#" onclick="logout()">Sign out</a>
@@ -18,6 +24,7 @@
   let profile;
   try {
     profile = JSON.parse(localStorage.getItem("profile"));
+    document.getElementById("nav-username").innerHTML = profile.name;
   }
   catch(e){
     window.location = "/login"
