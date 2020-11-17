@@ -1,6 +1,21 @@
 const request = require('request')
 const dataServer = process.env.DATA_SERVER_URL || "http://localhost:5000";
 
+module.exports.login = function(req, res){
+    let data = {
+        serverUrl: dataServer
+    }
+    return res.render("login", data);
+}
+
+module.exports.getModels = function(req, res){
+        let data = {
+            serverUrl: dataServer,
+            page: 'model'
+        }
+        return res.render("models", data);
+}
+
 module.exports.getTests = function(req, res){
     request({
         url: `${dataServer}/tests`,
@@ -12,6 +27,7 @@ module.exports.getTests = function(req, res){
 
         let data = JSON.parse(body);
         data.serverUrl = dataServer;
+        data.page = 'test'
 
         return res.render("tests", data);
     })

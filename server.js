@@ -13,6 +13,8 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(express.static(__dirname + '/public'));
+
 app.set('view options', { layout: false });
 app.set('views', path.join(__dirname + '/views'));
 app.set('view engine', 'ejs');

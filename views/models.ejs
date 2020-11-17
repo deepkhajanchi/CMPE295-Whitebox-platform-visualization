@@ -31,7 +31,7 @@
 
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-          <h1 class="h2">Model Tests</h1>
+          <h1 class="h2">Models</h1>
           <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
               <button class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#createTestModal"><i class="fas fa-plus"></i></button>
@@ -45,32 +45,13 @@
               <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Input</th>
                 <th>Status</th>
-                <th>Scheduled At</th>
                 <th>Created At</th>
                 <th>Updated At</th>
                 <th></th>
               </tr>
             </thead>
-            <tbody id="testTableBody">
-              <% outputs.forEach((item) => { %>
-              <tr>
-                <td><%- item.id %></td>
-                <td><%- item.name %></td>
-                <td><img src="<%- item.input %>" width="50" height="50"></td>
-                <td><span class="badge badge-pill badge-<%- item.status == 'DONE' ? 'success' : item.status == 'RUNNING' ? 'warning' : 'danger'%>"><%- item.status%></span></td>
-                <td><%- item.timestamp %></td>
-                <td><%- item.createdAt %></td>
-                <td><%- item.updatedAt %></td>
-                <td>
-                    <button type="button" class="btn btn-outline-secondary" onclick="redirectToTest(<%- item.id %>)" <%- item.status == 'DONE' ? '' : 'disabled'%>><i class="fas fa-eye"></i></button>
-                    <button type="button" class="btn btn-outline-danger" onclick="deleteTest(<%- item.id %>)"><i class="far fa-trash-alt"></i></button>
-                </td>
-
-              </tr>
-              <% }) %>
-
+            <tbody id="modelTableBody">
             </tbody>
           </table>
         </div>
@@ -83,31 +64,21 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">New Test</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Import Model</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form onsubmit="createTest()">
-            <div class="modal-body">                
+        <form onsubmit="importModel()">
+            <div class="modal-body">     
                 <div class="form-group">
-                <label for="testName">Test Name</label>
-                <input type="text" class="form-control" id="testName" placeholder="Enter name" required>
-                </div>
-                <div class="form-group">
-                    <label for="testModel">Model Type</label>
-                    <select class="form-control" id="availableModels">
-                    </select>
-                </div>
-                <div class="form-group">
-                <label for="imageUrl">Dataset</label>
-                <input type="text" class="form-control" id="imageUrl" aria-describedby="imageUrlHelp" placeholder="Path..." required>
-                <small id="imageUrlHelp" class="form-text text-muted">Path to image to be tested.</small>
+                  <label for="testName">Model file</label>
+                  <input type="file" class="form-control" id="file" placeholder="Enter name" required>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Import</button>
             </div>
         </form>
       </div>
@@ -130,31 +101,48 @@
   <script>
     feather.replace()
 
-    let availableModels = [];
-
     function redirectToTest(id){
       location.href = `/tests/${id}/result`;
     }
 
-    function createTest(){
+    function importModel(){
         event.preventDefault()
 
-        const url = "<%- serverUrl %>/tests";
+        const url = "<%- serverUrl %>/models";
 
-        const selectedModelIdx = $("#availableModels").val();
-
-        const data = {
-            name: $("#testName").val(),
-            // imageUrl: $("#imageUrl").val(),
-            profileId: profile.id, 
-            modelId: availableModels[selectedModelIdx].id,
-            cId: availableModels[selectedModelIdx].cId,
+        let formData = new FormData();
+        formData.append("profileId", profile.id);
+        // Attach file
+        let imagesPicker = $('#file')[0]
+        for (let i = 0; i < imagesPicker.files.length; i++){
+          let file = imagesPicker.files[i];
+          formData.append(`image${i}`, file); 
         }
 
-        alert(JSON.stringify(data, null, 4))
-
         $.ajax({
-            type: "POST",
+          type: "POST",
+          url: url,
+          data: formData,
+          contentType: false,
+          processData: false, 
+          success: function (body, res, xhr) {
+            location.reload();
+          },
+          error: function(err){
+            alert("Unable to create post, please try again.")
+          }
+      })
+    }
+
+    function deleteTest(id){
+        const url = "<%- serverUrl %>/tests";
+
+        const data = {
+            testId: id,
+            profileId: 1
+        }
+        $.ajax({
+            type: "DELETE",
             url: url,
             contentType: "application/json",
             data: JSON.stringify(data),
@@ -167,29 +155,38 @@
         });
     }
 
-    function renderModelPicker(){
+    function renderTable(){
       $.ajax({
+          url: `<%- serverUrl %>/models?profileId=${profile.id}`,
           type: "GET",
-          url: `<%- serverUrl %>/models?profileId=${profile.id}&status=READY&limit=100`,
           success: function(xhr, res, options){
-              let payload = "";
+            let data = xhr;
+            
+            let payload = "";
+            (data.data || []).map(function(item){
+              payload += `
+                <tr>
+                  <td>${item.id}</td>
+                  <td>${item.name}</td>
+                  <td><span class="badge badge-pill badge-${item.status == 'READY' ? 'success' : item.status == 'INITIALIZING' ? 'warning' : 'danger'}">${item.status}</span></td>
+                  <td>${item.createdAt}</td>
+                  <td>${item.updatedAt}</td>
+                  <td>   
+                      <button type="button" class="btn btn-outline-danger" onclick="deleteTest(${item.id})"><i class="far fa-trash-alt"></i></button>
+                  </td>
+                </tr>`
+            })
 
-              availableModels.push(...xhr.data);
-
-              xhr.data.map(function(item, idx){
-                payload += `<option value="${idx}">${item.id} - ${item.name}</option>`
-              })
-
-
-              document.getElementById("availableModels").innerHTML = payload;
+            document.getElementById("modelTableBody").innerHTML = payload;
           },
           error: function(xhr){
-              console.log("err")
+            console.log("err")
           }
-      });
+        }
+      )
     }
 
-    renderModelPicker();
+    renderTable();
   </script>
 </body>
 

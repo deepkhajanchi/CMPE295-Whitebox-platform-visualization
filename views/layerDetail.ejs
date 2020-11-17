@@ -178,7 +178,7 @@
     };
 
     function renderNeuronList(){
-      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- id %>/neurons?offset=0&limit=1000`;
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- id %>/neurons?offset=0&limit=10000`;
       $.ajax({
           type: "GET",
           url: url,
