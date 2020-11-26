@@ -114,6 +114,7 @@
         <!-- <canvas class="my-4" id="myChart" width="900" height="380"></canvas> -->
 
         <h2>Input</h2>
+        <canvas id="inputChart"></canvas>
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
@@ -127,8 +128,8 @@
             <tbody id="inputTableBody">
               <% input.forEach((item) => { %>
               <tr>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>/neurons/<%- item.id %>"><%- item.id %></a></td>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>"><%- item.layer.name %></a></td>
+                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>/neurons/<%- item.id %>?profileId=1"><%- item.id %></a></td>
+                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>?profileId=1"><%- item.layer.name %></a></td>
                 <td><i class="fas fa-circle" style="color:<%- getColorForPercentage((item.weight + 1) / 2) %>"></i>  <%- item.weight %></td>
                 <td><i class="fas fa-circle" style="color:<%- getColorForPercentage((item.value + 1) / 2) %>"></i>  <%- item.value %></td>
               </tr>
@@ -138,9 +139,8 @@
           </table>
         </div>
 
-        <canvas id="inputChart"></canvas>
-
         <h2>Ouput Link</h2>
+        <canvas id="outputChart"></canvas>
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
@@ -162,7 +162,6 @@
             </tbody>
           </table>
         </div>
-        <canvas id="outputChart"></canvas>
       </main>
     </div>
   </div>

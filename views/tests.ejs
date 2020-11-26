@@ -83,14 +83,14 @@
                     </select>
                 </div>
                 <div class="form-group">
-                <label for="dataset_path">Dataset</label>
-                <input type="text" class="form-control" id="dataset_path" aria-describedby="imageUrlHelp" placeholder="Path..." required>
-                <small id="imageUrlHelp" class="form-text text-muted">Path to image to be tested.</small>
+                  <label for="availableDatasets">Dataset</label>
+                  <select class="form-control" id="availableDatasets">
+                  </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button id="submitFormButton" type="submit" class="btn btn-primary">Create</button>
             </div>
         </form>
       </div>
@@ -114,9 +114,10 @@
     feather.replace()
 
     let availableModels = [];
+    let availableDatasets = [];
 
     function redirectToTest(id){
-      location.href = `/tests/${id}/result`;
+      location.href = `/tests/${id}/result?profileId=${profile.id}`;
     }
 
     function createTest(){
@@ -125,17 +126,16 @@
         const url = "<%- serverUrl %>/tests";
 
         const selectedModelIdx = $("#availableModels").val();
-
+        const selectedDatasetIdx = $("#availableDatasets").val();
+       
         const data = {
             name: $("#testName").val(),
             // imageUrl: $("#imageUrl").val(),
             profileId: profile.id, 
             modelId: availableModels[selectedModelIdx].id,
             cId: availableModels[selectedModelIdx].cId,
-            dataPath: $("#dataset_path").val()
+            datasetId: availableDatasets[selectedDatasetIdx].id,
         }
-
-        alert(JSON.stringify(data, null, 4))
 
         $.ajax({
             type: "POST",
@@ -166,11 +166,67 @@
 
 
               document.getElementById("availableModels").innerHTML = payload;
+
+              renderDatasetPicker(availableModels[0].id);
           },
           error: function(xhr){
               console.log("err")
           }
       });
+    }
+
+    function renderDatasetPicker(modelId){
+      if (modelId){
+        $.ajax({
+            type: "GET",
+            url: `<%- serverUrl %>/datasets?profileId=${profile.id}&modelId=${modelId}&limit=100`,
+            success: function(xhr, res, options){
+                let payload = "";
+
+                availableDatasets = xhr.data;
+
+                xhr.data.map(function(item, idx){
+                  payload += `<option value="${idx}">${item.id} - ${item.name}</option>`
+                })
+                document.getElementById("availableDatasets").innerHTML = payload;
+
+                let submitBtn = $("#submitFormButton");
+                if ($("#availableModels").val() && $("#availableDatasets").val()){
+                  submitBtn.prop('disabled', false);
+                }
+                else {
+                  submitBtn.prop('disabled', true);
+                }
+            },
+            error: function(xhr){
+                console.log("err")
+            }
+        });
+      }
+    }
+
+    function renderTests(modelId){
+      if (modelId){
+        $.ajax({
+            type: "GET",
+            url: `<%- serverUrl %>/datasets?profileId=${profile.id}&modelId=${modelId}&limit=100`,
+            success: function(xhr, res, options){
+                let payload = "";
+
+                availableDataset = xhr.data;
+
+                xhr.data.map(function(item, idx){
+                  payload += `<option value="${idx}">${item.id} - ${item.name}</option>`
+                })
+
+
+                document.getElementById("availableDatasets").innerHTML = payload;
+            },
+            error: function(xhr){
+                console.log("err")
+            }
+        });
+      }
     }
 
     function renderTests(){
@@ -204,6 +260,11 @@
         }
       });
     }
+
+    $( "#availableModels" ).change(function() {
+      const selectedModelIdx = $("#availableModels").val();
+      renderDatasetPicker(availableModels[selectedModelIdx].id);
+    });
 
     renderTests();
     renderModelPicker();

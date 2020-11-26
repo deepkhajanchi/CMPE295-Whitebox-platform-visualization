@@ -45,24 +45,13 @@
               <tr>
                 <th>Id</th>
                 <th>Name</th>
+                <th>Path</th>
+                <th>Model</th>
                 <th>Created At</th>
                 <th></th>
               </tr>
             </thead>
-            <tbody id="testTableBody">
-              <% datasets.forEach((item) => { %>
-              <tr>
-                <td><%- item.id %></td>
-                <td><%- item.name %></td>
-                <td><%- item.createdAt %></td>
-                <td>
-                    <button type="button" class="btn btn-outline-secondary" onclick="redirectToDataset(<%- item.id %>)"><i class="fas fa-eye"></i></button>
-                    <button type="button" class="btn btn-outline-danger" onclick="deleteDataset(<%- item.id %>)"><i class="far fa-trash-alt"></i></button>
-                </td>
-
-              </tr>
-              <% }) %>
-
+            <tbody id="datasetTableBody">
             </tbody>
           </table>
         </div>
@@ -84,9 +73,20 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="datasetName">Dataset Name</label>
-                    <input type="text" class="form-control" id="testName" placeholder="Enter name" required>
+                    <input type="text" class="form-control" id="datasetName" placeholder="Enter name" required>
                 </div>
+                <div class="form-group">
+                  <label for="testModel">Model Type</label>
+                  <select class="form-control" id="availableModels">
+                  </select>
+              </div>
+              <div class="form-group">
+                <label for="testName">Dataset File</label>
+                <input type="file" class="form-control" id="file" placeholder="Data file..." required>
+              </div>
             </div>
+
+            
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">Create</button>
@@ -112,6 +112,8 @@
   <script>
     feather.replace()
 
+    let availableModels = [];
+
     function redirectToDataset(id){
       location.href = `/datasets/${id}`;
     }
@@ -120,38 +122,43 @@
         event.preventDefault()
 
         const url = "<%- serverUrl %>/datasets";
-        const data = {
-            name: $("#testName").val(),
-            profileId: 1, 
-            // modelId: $("imageUrl").text(),
+
+        const selectedModelIdx = $("#availableModels").val();
+
+        let formData = new FormData();
+        formData.append("profileId", profile.id);
+        formData.append("modelId", availableModels[selectedModelIdx].id);
+        formData.append("name", $("#datasetName").val());
+
+        // Attach file
+        let filePicker = $('#file')[0]
+        for (let i = 0; i < filePicker.files.length; i++){
+          let file = filePicker.files[i];
+          formData.append(`image${i}`, file); 
         }
 
         $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/json",
-            data: JSON.stringify(data),
-            success: function(xhr, res, options){
-                location.reload();
-            },
-            error: function(xhr){
-                console.log("err")
-            }
-        });
+          type: "POST",
+          url: url,
+          data: formData,
+          contentType: false,
+          processData: false, 
+          success: function (body, res, xhr) {
+            location.reload();
+          },
+          error: function(err){
+            alert("Unable to create post, please try again.")
+          }
+        })
     }
 
     function deleteDataset(id){
-        const url = "<%- serverUrl %>/datasets";
+        const url = `<%- serverUrl %>/datasets/${id}?profileId=${profile.id}`;
 
-        const data = {
-            testId: id,
-            profileId: 1
-        }
         $.ajax({
             type: "DELETE",
             url: url,
             contentType: "application/json",
-            data: JSON.stringify(data),
             success: function(xhr, res, options){
                 location.reload();
             },
@@ -160,6 +167,61 @@
             }
         });
     }
+
+    function renderModelPicker(){
+      $.ajax({
+          type: "GET",
+          url: `<%- serverUrl %>/models?profileId=${profile.id}&status=READY&limit=100`,
+          success: function(xhr, res, options){
+              let payload = "";
+
+              availableModels.push(...xhr.data);
+
+              xhr.data.map(function(item, idx){
+                payload += `<option value="${idx}">${item.id} - ${item.name}</option>`
+              })
+
+
+              document.getElementById("availableModels").innerHTML = payload;
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+      });
+    }
+
+    function renderDatasets(){
+        $.ajax({
+          type: "GET",
+          url: `<%- serverUrl %>/datasets?profileId=${profile.id}&limit=100`,
+          success: function(xhr, res, options){
+              let payload = "";
+
+              xhr.data.map(function(item, idx){
+                payload += `
+                  <tr>
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td><a href="${item.path}">${item.path}</a></td>
+                    <td>${item.modelId}</td>
+                    <td>${item.createdAt}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-danger" onclick="deleteDataset(${item.id})"><i class="far fa-trash-alt"></i></button>
+                    </td>
+                  </tr>`
+              })
+
+
+              document.getElementById("datasetTableBody").innerHTML = payload;
+          },
+          error: function(xhr){
+              console.log("err")
+          }
+      });
+    }
+
+    renderDatasets();
+    renderModelPicker();
   </script>
 </body>
 

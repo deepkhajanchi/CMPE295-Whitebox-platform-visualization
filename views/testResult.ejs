@@ -207,7 +207,7 @@
     }
 
     function renderInputLayerSection(){
-      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- inputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- inputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}&profileId=${profile.id}`;
       $.ajax({
           type: "GET",
           url: url,
@@ -231,7 +231,7 @@
     }
 
     function renderOutputLayerSection(){
-      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- outputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- outputLayer.id %>/neurons?offset=${inputLayerOffset}&limit=${inputLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}&profileId=${profile.id}`;
       $.ajax({
           type: "GET",
           url: url,
@@ -255,7 +255,7 @@
     }
 
     function renderHiddenLayerSection(){
-      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers?offset=${hiddenLayersOffset}&limit=${hiddenLayersLimit}&type=HIDDEN`;
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers?offset=${hiddenLayersOffset}&limit=${hiddenLayersLimit}&type=HIDDEN&profileId=${profile.id}`;
       $.ajax({
           type: "GET",
           url: url,
@@ -267,7 +267,7 @@
 
               document.getElementById("hiddenLayerLabel").innerHTML = layer.name;
 
-              const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/${layer.id}/neurons?offset=${hiddenLayerOffset}&limit=${hiddenLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}`;
+              const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/${layer.id}/neurons?offset=${hiddenLayerOffset}&limit=${hiddenLayerLimit}&minBias=${minBias}&maxBias=${maxBias}&minOutput=${minOutput}&maxOutput=${maxOutput}&profileId=${profile.id}`;
               $.ajax({
                   type: "GET",
                   url: url,

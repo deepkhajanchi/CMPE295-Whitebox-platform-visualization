@@ -30,15 +30,19 @@ module.exports.getTests = function(req, res){
     //     data.serverUrl = dataServer;
     //     data.page = 'test'
 
+        let data = {
+            serverUrl: dataServer
+        }
         return res.render("tests", data);
     // })
 }
 
 module.exports.getSingleNeuronResult = function (req, res) {
     const { testId, layerId, neuronId } = req.params;
+    const { profileId } = req.query;
 
     request({
-        url: `${dataServer}/tests/${testId}/result/layers/${layerId}/neurons/${neuronId}`,
+        url: `${dataServer}/tests/${testId}/result/layers/${layerId}/neurons/${neuronId}?profileId=${profileId}`,
         method: "GET",
     }, function (err, hrx, body) {
         if (err) {
@@ -56,8 +60,10 @@ module.exports.getSingleNeuronResult = function (req, res) {
 
 module.exports.getTestResult = function (req, res) {
     const { testId } = req.params;
+    const { profileId } = req.query;
+
     request({
-        url: `${dataServer}/tests/${testId}`,
+        url: `${dataServer}/tests/${testId}?profileId=${profileId}`,
         method: "GET",
     }, function (err, hrx, testBody) {
         if (err){
@@ -66,7 +72,7 @@ module.exports.getTestResult = function (req, res) {
         let test = JSON.parse(testBody);
 
         request({
-            url: `${dataServer}/tests/${testId}/result`,
+            url: `${dataServer}/tests/${testId}/result?profileId=${profileId}`,
             method: "GET",
         }, function (err, hrx, resultBody) {
             if (err){
@@ -75,7 +81,7 @@ module.exports.getTestResult = function (req, res) {
             let result = JSON.parse(resultBody);
 
             request({
-                url: `${dataServer}/tests/${testId}/result/layers?type=INPUT`,
+                url: `${dataServer}/tests/${testId}/result/layers?type=INPUT&profileId=${profileId}`,
                 method: "GET",
             }, function (err, hrx, inputLayerBody) {
                 if (err){
@@ -85,7 +91,7 @@ module.exports.getTestResult = function (req, res) {
                 let inputLayer = JSON.parse(inputLayerBody).data[0];
 
                 request({
-                    url: `${dataServer}/tests/${testId}/result/layers?type=OUTPUT`,
+                    url: `${dataServer}/tests/${testId}/result/layers?type=OUTPUT&profileId=${profileId}`,
                     method: "GET",
                 }, function (err, hrx, outputLayerBody) {
                     if (err){
@@ -94,7 +100,7 @@ module.exports.getTestResult = function (req, res) {
                     let outputLayer = JSON.parse(outputLayerBody).data[0];
                     
                     request({
-                        url: `${dataServer}/tests/${testId}/result/layers`,
+                        url: `${dataServer}/tests/${testId}/result/layers?profileId=${profileId}`,
                         method: "GET",
                     }, function (err, hrx, layersBody) {
                         if (err){
@@ -128,23 +134,11 @@ module.exports.getTestResult = function (req, res) {
 }
 
 module.exports.getDatasets = function(req, res){
-    request({
-        url: `${dataServer}/datasets`,
-        method: "GET",
-    }, function (err, hrx, datasetBody) {
-        if (err){
-
-        }
-        let datasets = JSON.parse(datasetBody)
+    const data = {
+        serverUrl: dataServer
+    }
         
-
-        const data = {
-            datasets: datasets.data,
-            serverUrl: dataServer
-        }
-            
-        return res.render("datasets", data);
-    })
+    return res.render("datasets", data);
 }
 
 module.exports.getDataset = function(req, res){
@@ -180,8 +174,10 @@ module.exports.getDataset = function(req, res){
 
 module.exports.getLayer = function(req, res){
     const { layerId, testId } = req.params;
+    const { profileId } = req.query;
+    
     request({
-        url: `${dataServer}/tests/${testId}/result/layers/${layerId}`,
+        url: `${dataServer}/tests/${testId}/result/layers/${layerId}?profileId=${profileId}`,
         method: "GET",
     }, function (err, hrx, body) {
         if (err){

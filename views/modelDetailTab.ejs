@@ -195,7 +195,7 @@
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide)
             .on("click", function(d,i){
-                window.location.href = `/tests/<%- testId %>/result/layers/${d.id}`
+                window.location.href = `/tests/<%- testId %>/result/layers/${d.id}?profileId=${profile.id}`
             });
 
         // });
@@ -260,7 +260,7 @@
     }
 
     function renderLayerChart(){
-        const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers`;
+        const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers?profileId=${profile.id}`;
         $.ajax({
             type: "GET",
             url: url,

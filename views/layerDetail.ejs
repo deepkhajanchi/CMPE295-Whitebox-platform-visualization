@@ -178,7 +178,7 @@
     };
 
     function renderNeuronList(){
-      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- id %>/neurons?offset=0&limit=10000`;
+      const url = `<%- serverUrl %>/tests/<%- testId %>/result/layers/<%- id %>/neurons?offset=0&limit=10000&profileId=${profile.id}`;
       $.ajax({
           type: "GET",
           url: url,
@@ -189,7 +189,7 @@
               body.data.map(function(node){
                   // neuronTableBody.append(`<button type="button" class="btn btn-outline-info btn-block" onclick="redirectToNodeResult(${layer.id}, ${node.id})">Id: ${node.id} | Output: ${node.output}</button><br>`);
                   neuronTableBody.append(`<tr>
-                      <td><a href="/tests/<%- testId %>/result/layers/<%- id %>/neurons/${node.id}">${node.id}</a></td>
+                      <td><a href="/tests/<%- testId %>/result/layers/<%- id %>/neurons/${node.id}?profileId=${profile.id}">${node.id}</a></td>
                       <td>${node.bias}</td>
                       <td>${node.activationFunction}</td>
                       <td><i class="fas fa-circle" style="color:${getColorForPercentage((node.output + 1) / 2)}"></i>  ${node.output} </td>
