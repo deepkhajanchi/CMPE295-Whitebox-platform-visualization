@@ -126,15 +126,6 @@
               </tr>
             </thead>
             <tbody id="inputTableBody">
-              <% input.forEach((item) => { %>
-              <tr>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>/neurons/<%- item.id %>?profileId=1"><%- item.id %></a></td>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>?profileId=1"><%- item.layer.name %></a></td>
-                <td><i class="fas fa-circle" style="color:<%- getColorForPercentage((item.weight + 1) / 2) %>"></i>  <%- item.weight %></td>
-                <td><i class="fas fa-circle" style="color:<%- getColorForPercentage((item.value + 1) / 2) %>"></i>  <%- item.value %></td>
-              </tr>
-              <% }) %>
-
             </tbody>
           </table>
         </div>
@@ -150,15 +141,7 @@
                 <th>Weight</th>
               </tr>
             </thead>
-            <tbody id="inputTableBody">
-              <% outputs.forEach((item) => { %>
-              <tr>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>/neurons/<%- item.id %>"><%- item.id %></a></td>
-                <td><a href="/tests/<%- test.id %>/result/layers/<%- item.layer.id %>"><%- item.layer.name %></a></td>
-                <td><i class="fas fa-circle" style="color:<%- getColorForPercentage((item.weight + 1) / 2) %>"></i>   <%- item.weight %></td>
-              </tr>
-              <% }) %>
-
+            <tbody id="outputTableBody">
             </tbody>
           </table>
         </div>
@@ -314,6 +297,39 @@
         return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
         // or output as hex if preferred
     };
+
+    function renderOuputTable(){
+      let outputs = <%- JSON.stringify(outputs) %>;
+      alert(JSON.stringify(outputs, null, 4))
+
+      let payload = "";
+      outputs.forEach((item) => {
+        payload +=
+          `<tr>
+            <td><a href="/tests/<%- test.id %>/result/layers/${item.layer.id}/neurons/${item.id}?profileId=${profile.id}">${item.id}</a></td>
+            <td><a href="/tests/<%- test.id %>/result/layers/${item.layer.id}?profileId=${profile.id}">${item.layer.name}</a></td>
+            <td><i class="fas fa-circle" style="color:${getColorForPercentage((item.weight + 1) / 2)}"></i>${item.weight}</td>
+          </tr>`
+      })
+      document.getElementById("outputTableBody").innerHTML = payload;
+    }
+
+    function renderInputTable(){
+      let input = <%- JSON.stringify(input) %>;
+      let payload = "";
+      input.forEach((item) => {
+        payload +=
+          `<tr>
+            <td><a href="/tests/<%- test.id %>/result/layers/${item.layer.id}/neurons/${item.id}?profileId=${profile.id}">${item.id}</a></td>
+            <td><a href="/tests/<%- test.id %>/result/layers/${item.layer.id}?profileId=${profile.id}">${item.layer.name}</a></td>
+            <td><i class="fas fa-circle" style="color:${getColorForPercentage((item.weight + 1) / 2)}"></i>  ${item.weight}</td>
+            <td><i class="fas fa-circle" style="color:${getColorForPercentage((item.value + 1) / 2)}"></i>  ${item.value}</td>
+          </tr>`
+      })
+      document.getElementById("inputTableBody").innerHTML = payload;
+    }
+    renderInputTable();
+    renderOuputTable();
   </script>
 </body>
 

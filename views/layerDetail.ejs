@@ -23,9 +23,28 @@
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <style>
+    #loading {
+      display: block;
+      position: absolute;
+      margin-top: 20px;
+      margin-left: 280px;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      width: 90vw;
+      height: 100vh;
+      background-color: rgba(192, 192, 192, 0.5);
+      background-image: url("https://i.gifer.com/YCZH.gif");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="loading"></div>
   <%- include('navBar.ejs') -%>
 
   <div class="container-fluid">
@@ -202,6 +221,8 @@
                   y: node.output
                 }
               }))
+
+              document.getElementById("loading").style.display = 'none';
           },
           error: function(xhr){
               console.log("err")
