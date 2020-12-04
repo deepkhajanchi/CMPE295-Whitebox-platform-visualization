@@ -1,5 +1,11 @@
+const { render } = require('ejs');
 const request = require('request')
 const dataServer = process.env.DATA_SERVER_URL || "http://localhost:5000";
+
+module.exports.introduction =function(req,res){
+    console.log("inside introduction!")
+    return res.render("introduction");
+}
 
 module.exports.login = function(req, res){
     let data = {
